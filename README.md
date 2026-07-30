@@ -32,6 +32,15 @@ Tested against **PrestaShop 8.2.3** (PHP 8.1+). Declared compatibility: 1.7.6 â†
 
 ## Quick start
 
+**One-liner** â€” pull + install + clear cache (set `PS` to your shop path):
+
+```bash
+PS=/var/www/prestashop; git clone -b claude/prestashop-combination-descriptions-9mo86z --depth 1 https://github.com/sh1njure/30yearsexperience.git /tmp/cd-mod && sudo cp -r /tmp/cd-mod/combinationdescriptions "$PS/modules/" && sudo chown -R www-data:www-data "$PS/modules/combinationdescriptions" && (cd "$PS" && sudo -u www-data php bin/console prestashop:module install combinationdescriptions && sudo -u www-data php bin/console cache:clear --no-warmup)
+```
+
+<details>
+<summary>Same thing, step by step</summary>
+
 ```bash
 # 1. copy the module into your shop
 cp -r combinationdescriptions /path/to/prestashop/modules/
@@ -43,6 +52,7 @@ php bin/console prestashop:module install combinationdescriptions
 # 3. clear cache
 php bin/console cache:clear --no-warmup
 ```
+</details>
 
 Then, in the admin panel, enable the Webservice and tick the
 `combination_descriptions` permission on your API key
