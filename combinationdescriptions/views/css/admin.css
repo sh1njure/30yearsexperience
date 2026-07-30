@@ -1,0 +1,13 @@
+/* Combination Descriptions — back-office styles. */
+.cd-combination {
+    border-left: 3px solid #25b9d7;
+}
+.cd-combination .panel-heading .badge {
+    margin-left: 8px;
+}
+.cd-lang-tabs {
+    margin-bottom: 12px;
+}
+.cd-lang-pane label {
+    font-weight: 600;
+}
