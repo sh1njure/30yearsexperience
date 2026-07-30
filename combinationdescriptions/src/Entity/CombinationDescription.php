@@ -69,10 +69,12 @@ class CombinationDescription extends ObjectModel
                 'validate' => 'isUnsignedId',
                 'required' => true,
             ],
+            // Not 'required': callers (Webservice/importer) may send only
+            // id_product_attribute; add()/update() derive id_product from it in
+            // hydrateProductId() before persisting. The DB column stays NOT NULL.
             'id_product' => [
                 'type' => self::TYPE_INT,
                 'validate' => 'isUnsignedId',
-                'required' => true,
             ],
             'id_shop' => [
                 'type' => self::TYPE_INT,
