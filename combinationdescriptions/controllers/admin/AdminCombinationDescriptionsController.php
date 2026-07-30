@@ -66,11 +66,11 @@ class AdminCombinationDescriptionsController extends ModuleAdminController
     public function postProcess()
     {
         if (Tools::isSubmit('submitDescriptions')) {
-            $this->processSave();
+            $this->saveDescriptions();
         } elseif (Tools::isSubmit('submitCopyToAll')) {
-            $this->processCopyToAll();
+            $this->copyToAllCombinations();
         } elseif (Tools::isSubmit('submitClearAll')) {
-            $this->processClearAll();
+            $this->clearAllDescriptions();
         }
 
         parent::postProcess();
@@ -81,7 +81,7 @@ class AdminCombinationDescriptionsController extends ModuleAdminController
      *
      * @return void
      */
-    protected function processSave()
+    protected function saveDescriptions()
     {
         $idProduct = (int) Tools::getValue('id_product');
         $idShop = (int) $this->context->shop->id;
@@ -117,7 +117,7 @@ class AdminCombinationDescriptionsController extends ModuleAdminController
      *
      * @return void
      */
-    protected function processCopyToAll()
+    protected function copyToAllCombinations()
     {
         $idProduct = (int) Tools::getValue('id_product');
         $idShop = (int) $this->context->shop->id;
@@ -161,7 +161,7 @@ class AdminCombinationDescriptionsController extends ModuleAdminController
      *
      * @return void
      */
-    protected function processClearAll()
+    protected function clearAllDescriptions()
     {
         $idProduct = (int) Tools::getValue('id_product');
         $idShop = (int) $this->context->shop->id;
