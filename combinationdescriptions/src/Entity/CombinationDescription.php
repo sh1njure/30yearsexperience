@@ -76,9 +76,13 @@ class CombinationDescription extends ObjectModel
                 'type' => self::TYPE_INT,
                 'validate' => 'isUnsignedId',
             ],
+            // No 'validate': the Webservice validates fields BEFORE add()/update()
+            // run, and isUnsignedId rejects an empty value — so an omitted
+            // id_shop would 400 before hydrateProductId() could default it.
+            // hydrateProductId() guarantees a valid positive shop id at write
+            // time; the DB column is NOT NULL.
             'id_shop' => [
                 'type' => self::TYPE_INT,
-                'validate' => 'isUnsignedId',
             ],
             'date_add' => [
                 'type' => self::TYPE_DATE,
@@ -128,9 +132,8 @@ class CombinationDescription extends ObjectModel
             'id_product' => [
                 'xlink_resource' => 'products',
             ],
-            'id_shop' => [
-                'xlink_resource' => 'shops',
-            ],
+            // id_shop stays a plain filterable integer field (not an xlink
+            // association) — it is a shop id the module manages itself.
         ],
     ];
 
@@ -200,7 +203,14 @@ class CombinationDescription extends ObjectModel
     protected function hydrateProductId()
     {
         if (empty($this->id_shop)) {
-            $this->id_shop = (int) Context::getContext()->shop->id;
+            // Guarantee a valid positive shop id even when the Webservice
+            // context has no shop resolved (it can report 0), so we never store
+            // id_shop = 0 (which would fail isUnsignedId on a later write).
+            $idShop = (int) Context::getContext()->shop->id;
+            if ($idShop <= 0) {
+                $idShop = (int) Configuration::get('PS_SHOP_DEFAULT');
+            }
+            $this->id_shop = $idShop > 0 ? $idShop : 1;
         }
 
         if (empty($this->id_product) && !empty($this->id_product_attribute)) {
