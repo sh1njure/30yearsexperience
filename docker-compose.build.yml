@@ -1,0 +1,15 @@
+# Override to BUILD the image locally instead of pulling it from GHCR.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+services:
+  prestashop:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: ghcr.io/sh1njure/30yearsexperience:latest
+
+  module-installer:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: ghcr.io/sh1njure/30yearsexperience:latest
