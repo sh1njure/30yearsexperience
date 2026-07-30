@@ -30,49 +30,7 @@ Tested against **PrestaShop 8.2.3** (PHP 8.1+). Declared compatibility: 1.7.6 �
 
 ---
 
-## Try it in Docker (turnkey shop, one line)
-
-Spin up a full **PrestaShop 8.2.3 with this module pre-installed** — no existing
-shop required. Pulls the prebuilt image from GHCR and starts everything:
-
-```bash
-curl -sSL https://raw.githubusercontent.com/sh1njure/30yearsexperience/claude/prestashop-combination-descriptions-9mo86z/docker-compose.yml | docker compose -f - up -d
-```
-
-Then:
-
-- Storefront: <http://localhost:8080>
-- Back office: <http://localhost:8080/admin1> — login `admin@example.com` / `prestashop123`
-
-A one-shot `module-installer` container waits for PrestaShop to finish its
-first-boot install, then enables the module automatically (first boot takes a
-couple of minutes). Watch it with `docker compose logs -f module-installer`.
-
-Stop / wipe:
-
-```bash
-docker compose down          # stop, keep data
-docker compose down -v       # stop and delete all data
-```
-
-<details>
-<summary>Build the image locally instead of pulling</summary>
-
-```bash
-git clone -b claude/prestashop-combination-descriptions-9mo86z https://github.com/sh1njure/30yearsexperience.git
-cd 30yearsexperience
-docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
-```
-</details>
-
-> The image is published by the [`docker-publish`](.github/workflows/docker-publish.yml)
-> GitHub Actions workflow to `ghcr.io/sh1njure/30yearsexperience`. After the
-> first CI run, make that package **Public** (GitHub → Packages → package
-> settings) so the one-liner works without `docker login`.
-
----
-
-## Install into an existing PrestaShop
+## Quick start
 
 **One-liner** — pull + install + clear cache (set `PS` to your shop path):
 
