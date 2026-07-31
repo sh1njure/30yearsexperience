@@ -1,15 +1,14 @@
 {**
- * Front-office combination descriptions block.
+ * Front-office data carrier for combination descriptions.
  *
- * Renders a container whose text is swapped client-side when the customer picks
- * a different combination. The parent product description stays visible as the
- * fallback (handled in front.js): if the selected combination has no text we
- * simply leave the theme's own product description untouched.
+ * We do NOT render a visible block: instead front.js overrides the theme's own
+ * Summary element (data-cd-selector) in place, so the existing top description
+ * updates when the customer changes combination. This tag only carries the
+ * per-combination text and the target selector.
+ *
+ * Blob shape: { id_product_attribute: {description, description_short} }.
  *}
-<div id="cd-combination-descriptions"
-     class="cd-combination-descriptions"
-     data-cd-product="{$cd_product_id|intval}">
-    <div class="cd-description js-cd-description"></div>
-    <div class="cd-description-short js-cd-description-short"></div>
-</div>
-<script type="application/json" id="cd-descriptions-data">{$cd_blob_json nofilter}</script>
+<script type="application/json"
+        id="cd-descriptions-data"
+        data-cd-product="{$cd_product_id|intval}"
+        data-cd-selector="{$cd_summary_selector|escape:'html':'UTF-8'}">{$cd_blob_json nofilter}</script>

@@ -34,6 +34,12 @@ class CombinationDescriptions extends Module
     /** @var string Default front-office display hook. */
     const DEFAULT_FRONT_HOOK = 'displayProductAdditionalInfo';
 
+    /** @var string Config key: CSS selector of the theme's Summary element to override. */
+    const CONFIG_SUMMARY_SELECTOR = 'CD_SUMMARY_SELECTOR';
+
+    /** @var string Default target: the classic theme's Summary (short description). */
+    const DEFAULT_SUMMARY_SELECTOR = '.product-description-short';
+
     /** @var string Admin controller class name. */
     const ADMIN_CONTROLLER = 'AdminCombinationDescriptions';
 
@@ -75,7 +81,8 @@ class CombinationDescriptions extends Module
             && $this->registerHook('actionAdminControllerSetMedia')
             && $this->installTab()
             && Configuration::updateValue(self::CONFIG_KEEP_DATA, 1)
-            && Configuration::updateValue(self::CONFIG_FRONT_HOOK, self::DEFAULT_FRONT_HOOK);
+            && Configuration::updateValue(self::CONFIG_FRONT_HOOK, self::DEFAULT_FRONT_HOOK)
+            && Configuration::updateValue(self::CONFIG_SUMMARY_SELECTOR, self::DEFAULT_SUMMARY_SELECTOR);
     }
 
     /**
@@ -165,6 +172,19 @@ class CombinationDescriptions extends Module
         $hook = (string) Configuration::get(self::CONFIG_FRONT_HOOK);
 
         return $hook !== '' ? $hook : self::DEFAULT_FRONT_HOOK;
+    }
+
+    /**
+     * CSS selector of the theme element whose content is replaced with the
+     * selected combination's text (the storefront Summary, by default).
+     *
+     * @return string
+     */
+    public function getSummarySelector()
+    {
+        $selector = (string) Configuration::get(self::CONFIG_SUMMARY_SELECTOR);
+
+        return $selector !== '' ? $selector : self::DEFAULT_SUMMARY_SELECTOR;
     }
 
     /* ------------------------------------------------------------------ *
@@ -266,6 +286,7 @@ class CombinationDescriptions extends Module
         $this->context->smarty->assign([
             'cd_product_id' => $idProduct,
             'cd_blob_json' => json_encode($safeBlob, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG),
+            'cd_summary_selector' => $this->getSummarySelector(),
         ]);
 
         return $this->fetch('module:combinationdescriptions/views/templates/hook/front.tpl');
@@ -362,8 +383,14 @@ class CombinationDescriptions extends Module
             $this->registerHook($newHook);
         }
 
+        $selector = trim((string) Tools::getValue(self::CONFIG_SUMMARY_SELECTOR));
+        if ($selector === '') {
+            $selector = self::DEFAULT_SUMMARY_SELECTOR;
+        }
+
         Configuration::updateValue(self::CONFIG_FRONT_HOOK, $newHook);
         Configuration::updateValue(self::CONFIG_KEEP_DATA, $keepData ? 1 : 0);
+        Configuration::updateValue(self::CONFIG_SUMMARY_SELECTOR, $selector);
 
         return $this->displayConfirmation(
             $this->trans('Settings updated.', [], 'Modules.Combinationdescriptions.Admin')
@@ -384,10 +411,21 @@ class CombinationDescriptions extends Module
                 'input' => [
                     [
                         'type' => 'text',
+                        'label' => $this->trans('Summary CSS selector', [], 'Modules.Combinationdescriptions.Admin'),
+                        'name' => self::CONFIG_SUMMARY_SELECTOR,
+                        'desc' => $this->trans(
+                            'The theme element whose text is replaced by the selected combination (the storefront Summary). Default .product-description-short. Change it if your theme shows the summary elsewhere.',
+                            [],
+                            'Modules.Combinationdescriptions.Admin'
+                        ),
+                        'required' => true,
+                    ],
+                    [
+                        'type' => 'text',
                         'label' => $this->trans('Front-office display hook', [], 'Modules.Combinationdescriptions.Admin'),
                         'name' => self::CONFIG_FRONT_HOOK,
                         'desc' => $this->trans(
-                            'The hook used to render descriptions on the product page. Defaults to displayProductAdditionalInfo; change it if your theme uses a different hook.',
+                            'The hook used to inject the combination data on the product page. Defaults to displayProductAdditionalInfo; change it if your theme does not fire that hook.',
                             [],
                             'Modules.Combinationdescriptions.Admin'
                         ),
@@ -431,6 +469,7 @@ class CombinationDescriptions extends Module
         $helper->submit_action = 'submitCombinationDescriptions';
         $helper->default_form_language = (int) $this->context->language->id;
         $helper->fields_value = [
+            self::CONFIG_SUMMARY_SELECTOR => $this->getSummarySelector(),
             self::CONFIG_FRONT_HOOK => $this->getFrontHook(),
             self::CONFIG_KEEP_DATA => (int) Configuration::get(self::CONFIG_KEEP_DATA),
         ];

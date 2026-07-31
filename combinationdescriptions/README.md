@@ -41,7 +41,8 @@ Tested against **PrestaShop 8.2.3** (PHP 8.1+). Compatible range declared as
 
 | Setting | Default | Meaning |
 |---|---|---|
-| **Front-office display hook** | `displayProductAdditionalInfo` | The hook used to render descriptions on the product page. Change it if your theme uses a different hook (e.g. `displayFooterProduct`). Changing it re-registers the module on the new hook. |
+| **Summary CSS selector** | `.product-description-short` | The theme element whose text is replaced by the selected combination (the storefront **Summary** shown near the price). Change it if your theme renders the summary in a different element. |
+| **Front-office display hook** | `displayProductAdditionalInfo` | The hook used to inject the combination data onto the product page. Change it if your theme does not fire that hook. Changing it re-registers the module on the new hook. |
 | **Keep data on uninstall** | Yes | When on, uninstalling leaves the tables in place so a reinstall keeps existing descriptions. Turn it off to have uninstall drop the tables. |
 
 ---
@@ -134,13 +135,17 @@ curl -u "YOUR_API_KEY:" \
 
 ## Front office behaviour
 
-- The module prints, on the product page, a hidden block plus a JSON blob of all
-  the product's combination descriptions.
-- `views/js/front.js` listens for PrestaShop's **`updatedProduct`** event and
-  swaps the shown text from the blob — no extra AJAX per combination change.
-- **Fallback:** if the selected combination has no description, the block is
-  hidden and the theme's own product description is left untouched. An empty
-  block is never rendered.
+- The module emits a JSON blob of all the product's combination descriptions
+  (plus the configured target selector) on the product page — no visible block
+  of its own.
+- `views/js/front.js` **overrides the theme's existing Summary element** (the top
+  product description, `.product-description-short` by default) with the selected
+  combination's text, and swaps it live on PrestaShop's **`updatedProduct`**
+  event — no extra AJAX per combination change. It uses the combination's
+  `description_short`, falling back to `description`, so a single-column import
+  still works.
+- **Fallback:** a combination with no description restores the product's own
+  Summary; the block is never emptied.
 - All HTML is purified server-side (`Tools::purifyHTML`) before output.
 
 ---
