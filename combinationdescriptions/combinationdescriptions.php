@@ -37,8 +37,12 @@ class CombinationDescriptions extends Module
     /** @var string Config key: CSS selector of the theme's Summary element to override. */
     const CONFIG_SUMMARY_SELECTOR = 'CD_SUMMARY_SELECTOR';
 
-    /** @var string Default target: the classic theme's Summary (short description). */
-    const DEFAULT_SUMMARY_SELECTOR = '.product-description-short';
+    /**
+     * @var string Default target for the storefront Summary (short description).
+     * Covers the classic theme's class and the common id-prefixed variant
+     * (`product-description-short-<id>`) used by many child themes.
+     */
+    const DEFAULT_SUMMARY_SELECTOR = '.product-description-short, [id^="product-description-short-"]';
 
     /** @var string Admin controller class name. */
     const ADMIN_CONTROLLER = 'AdminCombinationDescriptions';

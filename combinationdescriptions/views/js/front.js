@@ -15,7 +15,7 @@
   function readData() {
     var el = document.getElementById('cd-descriptions-data');
     if (!el) {
-      return { blob: {}, selector: '.product-description-short' };
+      return { blob: {}, selector: '.product-description-short, [id^="product-description-short-"]' };
     }
     var blob = {};
     try {
@@ -25,7 +25,8 @@
     }
     return {
       blob: blob,
-      selector: el.getAttribute('data-cd-selector') || '.product-description-short'
+      selector: el.getAttribute('data-cd-selector')
+        || '.product-description-short, [id^="product-description-short-"]'
     };
   }
 
